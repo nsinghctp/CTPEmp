@@ -1,0 +1,346 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>TechOps KPIs</title>
+        <style>@import "jqtouch/jqtouch.css";</style>
+        <style>@import "jqtouch/scrolling.css";</style>
+        <style>@import "themes/apple/theme.css";</style>
+        <style>@import "extensions/jqt.scroll.css";</style>
+        <script src="jqtouch/jquery-1.4.2.min.js"></script>
+        <script src="jqtouch/jqtouch.js"></script>
+        <script src="extensions/jqt.scroll.js" type="application/x-javascript" charset="utf-8"></script>
+        <script>
+            var jQT = new $.jQTouch({
+                                    icon: '',
+                                    addGlossToIcon: false,
+                                    startupScreen: '',
+                                    statusBar: 'black',
+                                    slideSelector: '.slide'
+                                
+                                    });
+                      
+            /********************************** Employees *****************************************************************/
+        
+            var mydb=false;
+            var str;
+            function onEmployeeLoad()
+            {		
+                initDB();
+                createTables();
+                loadRoles();
+                loadEmployees();
+                              
+            }
+            function getevent(e){
+                var target, event = (!e ? window.event :e );
+                if(event.target) {
+                    target = event.target;
+                } else if(event.srcElement) {
+                    target = event.srcElement;
+                }
+                if(target.nodeType === 3) {
+                    target = target.parentNode;
+                }
+                return target;
+            }
+            
+            
+            initDB = function() {
+                try { 
+                    if (!window.openDatabase) { 
+                        alert('not supported'); 
+                    } else { 
+                        var shortName = 'phonegap'; 
+                        var version = '1.0'; 
+                        var displayName = 'PhoneGap Test Database'; 
+                        var maxSize = 65536; // in bytes 
+                        mydb = openDatabase(shortName, version, displayName, maxSize); 
+                    
+                    }
+                } catch(e) { 
+                    // Error handling code goes here. 
+                    if (e == INVALID_STATE_ERR) { 
+                        // Version number mismatch. 
+                        alert("Invalid database version."); 
+                    } else { 
+                        alert("Unknown error "+e+"."); 
+                    } 
+                    return; 
+                } 
+            }
+            
+            
+            // create tables for the database
+            createTables = function() {
+                
+                try {
+                    mydb.transaction(
+                         function(transaction) {
+                         transaction.executeSql('CREATE TABLE IF NOT EXISTS Empctp(id INTEGER NOT NULL PRIMARY KEY,roleid INTEGER NOT NULL ,firstname TEXT NOT NULL DEFAULT "",lastname TEXT NOT NULL DEFAULT "");', [],nullDataHandler, errorHandler); 
+                                     
+                         transaction.executeSql('CREATE TABLE IF NOT EXISTS EmpRoles(id INTEGER NOT NULL PRIMARY KEY,rolename TEXT NOT NULL DEFAULT "");', [], nullRoleDataHandler, errorRoleHandler);
+                         
+                         /*transaction.executeSql('insert into Empctp (id,roleid,firstname,lastname) VALUES (1,1,"Namrata","Singhvi");', [], nullDataHandler, errorHandler); 
+                                     
+                          transaction.executeSql('insert into Empctp (id,roleid,firstname,lastname) VALUES (2,2,"Keira", "Knightley");', [], nullDataHandler, errorHandler); 
+                                     
+                          transaction.executeSql('insert into Empctp (id,roleid,firstname,lastname) VALUES (3,3,"Thomas", "Hug");', [], nullDataHandler, errorHandler); 
+                                     
+                          transaction.executeSql('insert into Empctp (id,roleid,firstname,lastname) VALUES (4,4,"Rajesh", "Hosali");', [], nullDataHandler, errorHandler);                                  
+                                    
+                          transaction.executeSql('insert into EmpRoles (id,rolename) VALUES (1,"Junior Consultant");', [], nullRoleDataHandler, errorRoleHandler); 
+                                     
+                          transaction.executeSql('insert into EmpRoles (id,rolename) VALUES (2,"Senior Consultant");', [], nullRoleDataHandler, errorRoleHandler); 
+                                     
+                          transaction.executeSql('insert into EmpRoles(id,rolename) VALUES (3,"Business Analyst");', [], nullRoleDataHandler, errorRoleHandler); 
+                                     
+                          transaction.executeSql('insert into EmpRoles (id,rolename) VALUES (4,"Delivery head");', [], nullRoleDataHandler, errorRoleHandler); */
+                    });
+                    
+                    
+                } catch(e) {
+                    /// alert(e.message);
+                    return;
+                }
+            }
+            // db error handler for employees - prevents the rest of the transaction going ahead on failure
+            errorHandler = function (transaction, error) { 
+                // returns true to rollback the transaction
+                return true;  
+            } 
+            
+            // null db data handler for employees
+            nullDataHandler = function (transaction, results) { } 
+            
+            
+            // db error handler for role- prevents the rest of the transaction going ahead on failure
+            errorRoleHandler = function (transaction, error) { 
+                // returns true to rollback the transaction
+                return true;  
+            } 
+            
+            // null db data handler for role
+            nullRoleDataHandler = function (transaction, results) { } 
+            
+            empDataHandler=function(transaction, results) {
+                // Handle the results 
+                for (var i=0; i<results.rows.length; i++) { 
+                    var row = results.rows.item(i); 
+                    $("#content").append('<li class="arrow"><a class="slide" href=\"#info\">'+row['firstname']+'</a></li>');
+                    
+                } 
+                     $("#content li a").click(function(e){
+                        var target = getevent(e);
+                        getEmpRole($(target).text());
+                         return false;
+                });
+                            
+            }   
+            
+            empnameDataHandler=function(transaction, results) {
+                // Handle the results
+                
+                $("#scrollcontent li").remove();
+                for (var i=0; i<results.rows.length; i++) { 
+                    var row = results.rows.item(i); 
+                    $("#scrollcontent").append('<li><a class="slide">'+row['rolename']+'</a></li>');
+                    
+                }   
+               
+            }
+            errorNameHandler = function (transaction, error) { 
+                // returns true to rollback the transaction
+                return true;  
+            } 
+            getEmpRole = function(emp_name){
+                try {
+                    mydb.transaction(
+                                     function(transaction) {
+                                     var val = '"' + emp_name + '"' ;
+                                     var mysql = 'SELECT rolename FROM EmpRoles where id IN (SELECT roleid from Empctp where firstname = '+val+')';
+                                     transaction.executeSql(mysql,[], empnameDataHandler, errorNameHandler);
+                                     
+                                     });
+                    
+                } catch(e) {
+                    alert(e.message);
+                }
+                
+            }   
+            // load the currently selected icons
+            loadEmployees = function() {
+                try {
+                    
+                    mydb.transaction(
+                        function(transaction) {
+                            transaction.executeSql('SELECT firstname FROM Empctp ORDER BY firstname',[], empDataHandler, errorHandler);
+                         });
+                    
+                } catch(e) {
+                    alert(e.message);
+                }
+                
+            }   
+            
+            roleDataHandler=function(transaction, results) {
+                // Handle the results 
+                for (var i=0; i<results.rows.length; i++) { 
+                    var row = results.rows.item(i); 
+                    $("#rolecontent").append('<li class="arrow"><a class="slide"  href="#info">'+row['rolename']+'</a></li>');
+                } 
+                    $("#rolecontent li a").click(function(e){
+                    var target = getevent(e);
+                    str = $(target).text();
+                    getEmpName(str);
+                    return false;
+                    });
+                
+            }      
+            rolenameDataHandler=function(transaction, results) {
+                $("#scrollcontent li").remove();
+                
+                // Handle the results 
+                for (var i=0; i<results.rows.length; i++) { 
+                    var row = results.rows.item(i); 
+                    $("#scrollcontent").append('<li><a class="slide">'+row['firstname']+" "+row['lastname']+'</a></li>');
+                  
+            }   
+            }
+            errorDataHandler = function (transaction, error) { 
+                // returns true to rollback the transaction
+                return true;  
+            } 
+            getEmpName = function(role_name){
+                try {
+                  //  alert(role_name);
+                    mydb.transaction(
+                            function(transaction) {
+                                 var val = '"' + role_name + '"' ;
+                                 var mysql = 'SELECT firstname,lastname FROM Empctp where roleid IN (SELECT id from EmpRoles where rolename = '+val+')';
+                                 transaction.executeSql(mysql,[], rolenameDataHandler, errorDataHandler);
+                             
+                             });
+                    
+                } catch(e) {
+                    alert(e.message);
+                }
+                
+            }   
+            // load the currently selected icons
+            loadRoles = function() {
+                try {
+                    
+                    mydb.transaction(
+                            function(transaction) {
+                            transaction.executeSql('SELECT rolename FROM EmpRoles ORDER BY rolename',[], roleDataHandler, errorRoleHandler);
+                            });
+                    
+                } catch(e) {
+                    alert(e.message);
+                }
+            }
+     
+            function createToolbar(title,bool) {
+                document.write('<div class="toolbar">');
+                document.write('<div class="fonttoolbar" style="text-align:center;font-size:16px;" align="center">'+title+'</div>')    ;
+             	
+                if(bool == 'true')
+                document.write('<a class="back" href="#">Back</a>');
+                
+                
+                document.write('</div>')
+            }
+        </script>
+        <style type="text/css" media="screen">
+            .fonttoolbar {
+                font-family: Helvetica;
+                font-weight:bold; 
+                font-size:8pt;
+                text-shadow: rgba(255,255,255,.2) 0 1px 1px;
+                color: white;
+            }
+            
+            .imageSettings{
+                left:-150px;
+                position: relative;
+                width:480px;
+                height:190px;
+            }
+            </style>
+    </head>
+    <body onload="onEmployeeLoad();">
+        
+        <div id="jqt">
+            <div id="item1" class="content current">
+                
+                <script type="text/javascript">
+                    createToolbar('Roles','false');
+                    </script>
+                
+                <div class="scroll">
+                   <ul id="rolecontent">
+                    </ul>
+                    
+                </div>
+
+            </div>
+            
+            <div id="item2" class="content current">
+                
+                <script type="text/javascript">
+                    createToolbar('Employees','false');
+                    </script>
+                
+                <div class="scroll">
+                    <ul id="content">
+                        
+                    </ul>
+                    
+                </div>
+            </div>
+            
+            
+            <div id="info" class="content">
+                <script type="text/javascript">
+                    createToolbar('Employees','true');
+                    </script>
+                
+                <div class="scroll">
+                    <ul id="scrollcontent">
+                          
+                    </ul>
+                    
+                </div>
+
+                
+            </div> 
+                       
+                      <!--
+             
+             Scroll container template
+             
+             <div id="someId" class="content">
+             <div class="toolbar">
+             <h1>Hello!</h1>
+             </div>
+             
+             <div class="scroll">
+             Scrolled content goes here!
+             </div>
+             </div>
+             
+             -->
+            
+            <nav id="tabbar">
+                <ul>
+                    <li><a  href="#item1" class="fade current">Roles</a></li>
+                    <li><a  href="#item2" class="fade">Employees</a></li>
+                    <li><a  href="#item3" class="fade">Help</a></li>
+                </ul>
+            </nav>
+        </div>
+        <form id="ajax_post" action="" method="POST" >
+            
+    </body>
+</html>

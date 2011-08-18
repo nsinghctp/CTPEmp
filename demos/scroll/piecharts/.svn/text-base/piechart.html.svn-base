@@ -1,0 +1,99 @@
+<html>
+  <head> 
+ 
+    <style type="text/css" media="screen">@import "../../jqtouch/jqtouch.min.css";</style>
+    <style type="text/css" media="screen">@import "../../../themes/jqt/theme.min.css";</style>
+     <script src="../../jqtouch/jquery.1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+     <script src="../../jqtouch/jqtouch.min.js" type="application/x-javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+            var jQT = new $.jQTouch({
+                icon: 'jqtouch.png',
+                addGlossToIcon: false,
+                startupScreen: 'jqt_startup.png',
+                statusBar: 'black',
+                preloadImages: [
+                    '../../themes/jqt/img/back_button.png',
+                    '../../themes/jqt/img/back_button_clicked.png',
+                    '../../themes/jqt/img/button_clicked.png',
+                    '../../themes/jqt/img/grayButton.png',
+                    '../../themes/jqt/img/whiteButton.png',
+                    '../../themes/jqt/img/loading.gif'
+                    ]
+            });
+                  </script>
+        <style type="text/css" media="screen">
+            body.fullscreen #home .info {
+                display: none;
+            }
+            #about {
+                padding: 100px 10px 40px;
+                text-shadow: rgba(255, 255, 255, 0.3) 0px -1px 0;
+                font-size: 13px;
+                text-align: center;
+              /*  background: #161618;*/
+              background:grey;
+            }
+            #about p {
+                margin-bottom: 8px;
+            }
+            #about a {
+                color: #fff;
+                font-weight: bold;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <title>My First chart using FusionCharts - JSON data URL</title>    
+    <script type="text/javascript" src="FusionCharts.js"></script>
+  </head>   
+  <body>  
+   <div id="animations" >
+            <div class="toolbar">
+                <h1>Weekly Sales Chart</h1>
+                 <a class="back" href="../NovartisDemo.html">Home</a>
+    </div>
+     <div class="info">
+    <div id="chartContainer">FusionCharts will load here!</div>        
+    <script type="text/javascript"><!--         
+
+      var myChart = new FusionCharts( "Pie3D.swf", 
+                   "myChartId", "200", "200", "0", "1" );
+        
+  
+   myChart.setJSONData(
+   {
+   "chart": {
+          "caption": "Pie Chart",
+          "numberprefix": "$",
+          },
+          "data":
+          [
+          {
+          "value": "25",
+          "label": "Item A",
+          "color": "AFD8F8"
+          },{
+          "value": "17",
+          "label": "Item B",
+          "color": "F6BD0F"
+          },{
+          "value": "23",
+          "label": "Item C",
+          "color": "8BBA00",
+          "issliced": "1"
+          },{
+          "value": "65",
+          "label": "Item D",
+          "color": "A66EDD"
+          },{
+          "value": "22",
+          "label": "Item E",
+          "color": "F984A1" }
+          ]
+    });
+      myChart.render("chartContainer");
+      
+    // -->     
+    </script>      
+    </div> 
+</html>

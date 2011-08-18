@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<title>2 background images</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+</head>
+<body>
+<!--<img src="up_green.png"  style="position: absolute; top: 35px; left: 300px; z-index: 4;"/>
+<img src="up_green.png"  style="position: absolute; top: 40px; left: 315px; z-index: 4;"/>
+<img src="side_green.png"  style="position: absolute; top: 52px; left: 328px; z-index: 1;"/>
+<img src="side_yellow.png" style="position: absolute; top: 65px; left: 325px; z-index: 1;"/>
+<img src="down_red.png"  style="position: absolute; top:77px; left: 310px; z-index: 1;"/>
+<img src="down_yellow.png"  style="position: absolute; top:72px; left: 294px; z-index: 1;"/>
+<img src="down_green.png"  style="position: absolute; top: 58px; left: 290px; z-index: 1;"/>
+-->
+
+<img src="up_green.png" style="position: absolute; top: 35px; left: 200px; z-index: 4;"/>
+<img src="up_green.png" style="position: absolute; top: 40px; left: 228px; z-index: 4;"/>
+<img src="side_green.png" style="position: absolute; top: 70px; left: 238px; z-index: 1;"/>
+<img src="side_yellow.png" style="position: absolute; top: 90px; left: 230px; z-index: 1;"/>
+<img src="down_red.png" style="position: absolute; top: 110px; left: 202px; z-index: 1;"/>
+<img src="down_yellow.png" style="position: absolute; top: 100px; left: 172px; z-index: 1;"/>
+<img src="down_green.png" style="position: absolute; top: 70px; left: 164px; z-index: 1;"/>
+</body>
+</html>
